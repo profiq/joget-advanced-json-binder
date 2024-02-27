@@ -207,7 +207,7 @@ public class AdvancedJsonApiDatalistBinder extends DataListBinderDefault {
             setProperty("pageNumber", Integer.toString(i));
             getProperties().remove("jsonResult"); // hack: force re-fetch
 
-            results = call(dataList);
+            Map<String, Object> results = call(dataList);
             parseResults(results, resultList);
         }
     }
