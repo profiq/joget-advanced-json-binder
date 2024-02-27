@@ -255,19 +255,19 @@ public class AdvancedJsonApiDatalistBinder extends DataListBinderDefault {
                 params = getQueryParam(dataList);
             }
 
-            Map properties = getProperties();
-            String url = getApiUrl(properties, params);
-            properties.put("jsonUrl", url);
+            String oldUrl = getPropertyString("jsonUrl");
+            setProperty("jsonUrl", getApiUrl(params));
 
             result = JsonApiUtil.callApi(properties, params);
             setProperty("jsonResult", result);
+            setProperty("jsonUrl", oldUrl);
         } else {
             result = (Map<String,Object>) getProperty("jsonResult");
         }
         return result;
     }
 
-    String getApiUrl(Map properties, Map<String, String> params) {
+    private String getApiUrl(Map<String, String> params) {
         String url = getPropertyString("jsonUrl");
         String queryString = "";
 
