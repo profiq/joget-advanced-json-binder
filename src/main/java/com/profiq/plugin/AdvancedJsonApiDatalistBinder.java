@@ -165,19 +165,28 @@ public class AdvancedJsonApiDatalistBinder extends DataListBinderDefault {
         DataListCollection resultList = new DataListCollection();
         if (!getProperties().containsKey("jsonResultList")) {
             Map<String,Object> results = call(dataList);
+            parseResults(results, resultList);
 
-            if (results != null) {
-                String multirowBaseObject = getPropertyString("multirowBaseObject");
-                multirowBaseObject = multirowBaseObject.replaceAll("\\[\\d?\\]", "");
+            // verify that we got the expected number of items when exporting
+            if (dataList.getDataListParam(TableTagParameters.PARAMETER_EXPORTING) != null) {
+                if (!getPropertyString("totalRowCountObject").isEmpty()) {
+                    Integer count = Integer.MAX_VALUE;
 
-                Object o = results;
-                String prefix = "";
-                if (multirowBaseObject.contains(".")) {
-                    prefix = multirowBaseObject.substring(0, multirowBaseObject.indexOf("."));
-                    o = results.get(prefix);
+                    try {
+                        Object c = JsonApiUtil.getObjectFromMap(getPropertyString("totalRowCountObject"), results);
+                        count = Integer.parseInt(c.toString());
+                    } catch (Exception e) {
+                        LogUtil.error(getClassName(), e, "");
+                    }
+
+                    LogUtil.info(getClassName(), "Total size: " + count);
+                    LogUtil.info(getClassName(), "Returned size: " + resultList.size());
+
+                    if (resultList.size() < count) {
+                        resultList = new DataListCollection();
+                        iterateAllPages(dataList, resultList, count);
+                    }
                 }
-
-                recursiveGetData(o, resultList, new HashMap<String, Object>(), prefix, multirowBaseObject);
             }
 
             setProperty("jsonResultList", resultList);
@@ -185,6 +194,38 @@ public class AdvancedJsonApiDatalistBinder extends DataListBinderDefault {
             resultList = (DataListCollection) getProperty("jsonResultList");
         }
         return resultList;
+    }
+
+    private void iterateAllPages(DataList dataList, DataListCollection resultList, int count) {
+        // reset page size
+        dataList.setPageSize(null);
+
+        Integer pages = (count / dataList.getPageSize());
+        LogUtil.info(getClassName(), "Number of pages: " + pages);
+
+        for (Integer i = 1; i <= pages; i++) {
+            setProperty("pageNumber", Integer.toString(i));
+            getProperties().remove("jsonResult"); // hack: force re-fetch
+
+            results = call(dataList);
+            parseResults(results, resultList);
+        }
+    }
+
+    private void parseResults(Map<String,Object> results, DataListCollection resultList) {
+        if (results != null) {
+            String multirowBaseObject = getPropertyString("multirowBaseObject");
+            multirowBaseObject = multirowBaseObject.replaceAll("\\[\\d?\\]", "");
+
+            Object o = results;
+            String prefix = "";
+            if (multirowBaseObject.contains(".")) {
+                prefix = multirowBaseObject.substring(0, multirowBaseObject.indexOf("."));
+                o = results.get(prefix);
+            }
+
+            recursiveGetData(o, resultList, new HashMap<String, Object>(), prefix, multirowBaseObject);
+        }
     }
 
     protected void recursiveGetData(Object o, DataListCollection resultList, Map<String, Object> data, String prefix, String base) {
@@ -320,9 +361,14 @@ public class AdvancedJsonApiDatalistBinder extends DataListBinderDefault {
 
         if (dataList.getDataListParam(TableTagParameters.PARAMETER_EXPORTTYPE) != null && dataList.getDataListParam(TableTagParameters.PARAMETER_EXPORTING) != null) {
             // exporting, set full list
-            page = "1";
-            dataList.setPageSize(DataList.MAXIMUM_PAGE_SIZE);
-            recordSize = DataList.MAXIMUM_PAGE_SIZE;
+            String pageNumberProperty = getPropertyString("pageNumber");
+            if (pageNumberProperty == null || pageNumberProperty.isEmpty()) {
+                page = "1";
+                dataList.setPageSize(DataList.MAXIMUM_PAGE_SIZE);
+                recordSize = DataList.MAXIMUM_PAGE_SIZE;
+            } else {
+                page = pageNumberProperty;
+            }
         }
         if (recordSize == -1) {
             recordSize = null;
@@ -330,6 +376,8 @@ public class AdvancedJsonApiDatalistBinder extends DataListBinderDefault {
         if (page != null && page.trim().length() > 0 && recordSize != null) {
             start = (Integer.parseInt(page) - 1) * recordSize;
         }
+
+        LogUtil.info(AdvancedJsonApiDatalistBinder.class.getName(), "Getting page " + page + " with " + recordSize + " records");
 
         // determine sort column & order direction
         String sortColumn = null;
