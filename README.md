@@ -3,21 +3,20 @@
 An improved version of the [JSON API binder](https://dev.joget.org/community/display/DX8/JSON+API+List+Data+Store) included in Joget DX 8.
 
 #### Description
-Easily specify dynamic query parameters in your reqeust. This plugin extends the default functionality of build in JSON API Data Binder with additional settings.
+Easily specify dynamic query parameters in your reqeust. This plugin extends the default functionality of the built-in in JSON API Data Binder with additional settings.
 
 #### Full description
-If your request needs dynamic query parameters such as page 
+This plugin improves upon the functionality of the built-in JSON API data list binder with the following features:
+* **Simple query parameter defintion** - The query parameter grid lets you easily specify which query parameters should be set to what dynamic values.
+* **Better datalist export** - Exporting now works with more APIs.
 
-TODO: Example usage
-
-
+You can download a sample application pulling data from the Star Wars API with our plugin [here](#).
 
 ## Development
-- Install docker
-
-You can build the plugin using docker and this command:
-```./build.sh```
-
+You can build the plugin via Docker by running the following command:
+```console
+./build.sh
+```
 
 ### Releasing:
 - Update the version in `pom.xml`
