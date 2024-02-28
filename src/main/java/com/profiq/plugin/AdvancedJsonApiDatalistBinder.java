@@ -167,7 +167,7 @@ public class AdvancedJsonApiDatalistBinder extends DataListBinderDefault {
             Map<String,Object> results = call(dataList);
             parseResults(results, resultList);
 
-            // verify that we got the expected number of items when exporting
+            // Verify that we got the expected number of items when exporting
             if (dataList.getDataListParam(TableTagParameters.PARAMETER_EXPORTING) != null) {
                 if (!getPropertyString("totalRowCountObject").isEmpty()) {
                     Integer count = Integer.MAX_VALUE;
@@ -186,6 +186,9 @@ public class AdvancedJsonApiDatalistBinder extends DataListBinderDefault {
                         resultList = new DataListCollection();
                         iterateAllPages(dataList, resultList, count);
                     }
+
+                    // Makes sure the entire list is exported
+                    dataList.setPageSize(DataList.MAXIMUM_PAGE_SIZE);
                 }
             }
 
@@ -197,7 +200,7 @@ public class AdvancedJsonApiDatalistBinder extends DataListBinderDefault {
     }
 
     private void iterateAllPages(DataList dataList, DataListCollection resultList, int count) {
-        // reset page size
+        // Reset page size to default
         dataList.setPageSize(null);
 
         Integer pages = (count / dataList.getPageSize());
