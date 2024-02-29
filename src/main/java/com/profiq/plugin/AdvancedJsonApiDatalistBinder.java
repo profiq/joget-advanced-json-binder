@@ -168,7 +168,8 @@ public class AdvancedJsonApiDatalistBinder extends DataListBinderDefault {
             parseResults(results, resultList);
 
             // Verify that we got the expected number of items when exporting
-            if (dataList.getDataListParam(TableTagParameters.PARAMETER_EXPORTING) != null) {
+            if (dataList.getDataListParam(TableTagParameters.PARAMETER_EXPORTING) != null &&
+                !"true".equals(getPropertyString("exportNoIterateAllPages"))) {
                 if (!getPropertyString("totalRowCountObject").isEmpty()) {
                     Integer count = Integer.MAX_VALUE;
 
