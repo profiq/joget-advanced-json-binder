@@ -8,9 +8,9 @@ Easily specify dynamic query parameters in your reqeust. This plugin extends the
 #### Full description
 This plugin improves upon the functionality of the built-in JSON API data list binder with the following features:
 * **Simple query parameter defintion** - The query parameter grid lets you easily specify which query parameters should be set to what dynamic values.
-* **Improved datalist export** - Compatible with more APIs thanks to combining multiple access mechanisms.
+* **Improved datalist export** - Compatible with more APIs thanks to combining multiple access mechanisms. This allows you to export all pages from the API resource when when it needs pagination to access all data. 
 
-You can download a sample application pulling data from the Star Wars API with our plugin [here](#).
+You can download a sample application pulling data from the Demo API with our plugin [here](#).
 
 ## Development
 You can build the plugin via Docker by running the following command:
