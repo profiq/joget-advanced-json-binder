@@ -180,8 +180,10 @@ public class AdvancedJsonApiDatalistBinder extends DataListBinderDefault {
                         LogUtil.error(getClassName(), e, "");
                     }
 
-                    LogUtil.info(getClassName(), "Total size: " + count);
-                    LogUtil.info(getClassName(), "Returned size: " + resultList.size());
+                    if ("true".equals(getPropertyString("debugMode"))) {
+                        LogUtil.info(getClassName(), "Total size: " + count);
+                        LogUtil.info(getClassName(), "Returned size: " + resultList.size());
+                    }
 
                     if (resultList.size() < count) {
                         resultList = new DataListCollection();
@@ -205,7 +207,10 @@ public class AdvancedJsonApiDatalistBinder extends DataListBinderDefault {
         dataList.setPageSize(null);
 
         Integer pages = (count / dataList.getPageSize());
-        LogUtil.info(getClassName(), "Number of pages: " + pages);
+
+        if ("true".equals(getPropertyString("debugMode"))) {
+            LogUtil.info(getClassName(), "Number of pages: " + pages);
+        }
 
         for (Integer i = 1; i <= pages; i++) {
             setProperty("pageNumber", Integer.toString(i));
@@ -335,7 +340,10 @@ public class AdvancedJsonApiDatalistBinder extends DataListBinderDefault {
                             queryString += "&";
                         }
                         queryString += name + "=" + param;
-                        LogUtil.info(AdvancedJsonApiDatalistBinder.class.getName(), "Adding query param " + name + "=" + param);
+
+                        if ("true".equals(getPropertyString("debugMode"))) {
+                            LogUtil.info(getClassName(), "Adding query param " + name + "=" + param);
+                        }
                     }
                 }
             }
@@ -381,7 +389,9 @@ public class AdvancedJsonApiDatalistBinder extends DataListBinderDefault {
             start = (Integer.parseInt(page) - 1) * recordSize;
         }
 
-        LogUtil.info(AdvancedJsonApiDatalistBinder.class.getName(), "Getting page " + page + " with " + recordSize + " records");
+        if ("true".equals(getPropertyString("debugMode"))) {
+            LogUtil.info(getClassName(), "Getting page " + page + " with " + recordSize + " records");
+        }
 
         // determine sort column & order direction
         String sortColumn = null;
