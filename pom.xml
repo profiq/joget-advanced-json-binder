@@ -4,7 +4,7 @@
     <groupId>com.profiq.plugin</groupId>
     <artifactId>advanced-json-datalist-binder-plugin</artifactId>
     <packaging>bundle</packaging>
-    <version>0.2-SNAPSHOT</version>
+    <version>1.0</version>
     <name>json-api-paging-plugin</name>
     <url>http://www.joget.org</url>
     <build>
